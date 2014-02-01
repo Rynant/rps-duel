@@ -13,4 +13,6 @@ def play():
 	return render_template("game.html")
 
 
-
+@app.route('/test')
+def test():
+    return render_template("layout.html")
