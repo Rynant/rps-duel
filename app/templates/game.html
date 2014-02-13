@@ -1,81 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RPS Duel - Test</title>
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/css/rpsduel.css" rel="stylesheet">
+{% extends "base.html" %}
+{% block content %}
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9] >
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    
-<!-- Wrap all page content here -->
-    <div id="wrap">
-
-      <!-- Fixed navbar -->
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div class="container">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">RPS Duel</a>
-          </div>
-          <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-              <li class="active"><a href="/test">Home</a></li>
-              <li><a href="/play">Play</a></li>
-              <li><a href="/Challenge">Challenge</a></li>
-              <li><a href="/Challenge">Join</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
 
       <!-- Begin page content -->
-      <div class="container">
+      <div id="game" class="container">
 
-        <div class="row">
-          <div class="col-md-6">
-              <div class="row"> <!-- Throw select buttons -->
-                <div class="col-md-4">Rock</div>
-                <div class="col-md-4">Paper</div>
-                <div class="col-md-4">Scissors</div>
-              </div>
+        <div id="throw-select" class="row game-buttons">
+          <div class="col-md-6 button-row">
+                <div class="col-sm-4 throw-button">
+					<button id="rock" type="button" class="btn btn-block btn-primary throw-button">
+                            Rock
+                        </button>
+				</div>
+                <div class="col-sm-4 throw-button">
+					<button id="paper" type="button" class="btn btn-block  btn-success throw-button">
+                            Paper
+                        </button>
+				</div>
+                <div class="col-sm-4 throw-button">
+					<button id="scissors" type="button" class="btn btn-block  btn-warning throw-button">
+                            Scissors
+                        </button>
+				</div>
           </div>
-          <div class="col-md-6">Rock - Paper - Scissors - Duel!</div>
+          <div class="col-md-6 button-row">
+            <div class="row button-row">
+                Hi, Lauren!
+            </div>
+          </div>
         </div>
 
-        <div class="row"> <!-- Hands -->
-          <div class="col-md-6">You</div>
-          <div class="col-md-6">Paper</div>
+        <div class="row hands"> <!-- Hands -->
+          <div id="player-hand" class="col-md-6 hand">You</div>
+          <div id="opponent-hand" class="col-md-6 hand">None</div>
         </div>
 
       </div>
-    </div>
 
-    <div id="footer">
-      <div class="container">
-        <p class="text-muted">
-            <span class="glyphicon glyphicon-gift"></span>
-            Donate: Only 6&cent; a day can provide my family with toothpaste.
-        </p>
-      </div>
-    </div>
-
-
-    <script src="https://code.jquery.com/jquery.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-  </body>
-</html>
+{% endblock %}

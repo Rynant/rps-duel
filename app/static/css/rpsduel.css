@@ -1,3 +1,39 @@
+/* Game Area */
+
+#game {
+    width: 600px;
+}
+
+#game * {
+	border: solid 1px black;
+}
+
+.hands {
+    height: 250px;
+}
+
+.hand {
+    height: 100%;
+}
+
+#player-hand {
+    background: #66A;
+    color: #EEE;
+}
+
+#opponent-hand {
+    background: #A66;
+    color: #EEE;
+}
+
+.throw-button {
+    height: 100%;
+}
+
+.button-row {
+    height: 60px;
+    background: #6A6;
+}
 /* Sticky footer styles
 -------------------------------------------------- */
 
@@ -6,6 +42,8 @@ body {
   height: 100%;
   /* The html and body elements cannot have any padding or margin. */
 }
+
+
 
 /* Wrapper for page content to push down footer */
 #wrap {
