@@ -11,21 +11,20 @@ msg_count = 0
 def index():
     return render_template("index.html")
 
-print('#####SCRIPT')
 
 @app.route('/play')
 def play():
-	return render_template("game.html")
+	return render_template("game.html",
+            scripts=[
+                'http:////cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js',
+                '/static/js/rps.js'])
 
 #TODO HTTP_SEC_WEBSOCKET_KEY
 @socketio.on('connect', namespace='/echo')
 def echo_socket():
-    print('******CONNECT')
     emit('connected', {'data': 'Connected'})
 
 
 @socketio.on('throw', namespace='/echo')
 def receive_throw(message):
-    print('******THROW')
-    print(message)
     emit('throw ack', {'data': 'ACK: ' + message['data']})
