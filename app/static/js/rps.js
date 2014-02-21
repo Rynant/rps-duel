@@ -1,9 +1,10 @@
 var mymsg = '';
 $(document).ready(function() {
-	var socket = io.connect('http://localhost:5000/echo');
+	var socket = io.connect('http://localhost:5000/play');
 
 	socket.on('connected', function(msg) {
 		$('#opponent-hand').text("Socket has been opened!");
+        socket.emit('connect_ack', {data: 'ACK'});
 	});
 	socket.on('closed', function(){
 		$('#opponent-hand').text("Socket has closed!");
