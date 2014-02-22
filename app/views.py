@@ -3,9 +3,19 @@ from flask import render_template, session, request
 from app import app, socketio, emit
 from uuid import uuid4
 import logging
+from logging import StreamHandler
 
-logging.basicConfig(level=logging.INFO)
-app.logger.debug('START')
+logger = logging.getLogger("Views")
+logger.setLevel(logging.DEBUG)
+handler = StreamHandler()
+handler.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+
+logger.debug('START')
 
 players = []
 msg_count = 0
@@ -45,7 +55,7 @@ def play_connect():
 @socketio.on('connect_ack', namespace='/play')
 def play_connect_ack(message):
     players.append(get_this_socket())
-    app.logger.debug('play_connect_ack PLAYERS: \n\t' + 
+    logger.debug('play_connect_ack PLAYERS: \n\t' + 
             '\n\t'.join(str(p) for p in players))
 
    
@@ -54,7 +64,7 @@ def play_connect_ack(message):
 def play_disconnect():
     global players
     players.remove(get_this_socket())
-    app.logger.debug('play_disconnect PLAYERS: \n\t' + 
+    logger.debug('play_disconnect PLAYERS: \n\t' + 
             '\n\t'.join(str(p) for p in players))
 
    

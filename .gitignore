@@ -20,6 +20,9 @@ var/
 .installed.cfg
 *.egg
 
+# Vim swap file
+*.swp
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
