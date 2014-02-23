@@ -2,8 +2,10 @@
 from flask import render_template, session, request
 from app import app, socketio, emit
 from uuid import uuid4
+from collections import OrderedDict
 import logging
 from logging import StreamHandler
+from runner import RpsRunner
 
 logger = logging.getLogger("Views")
 logger.setLevel(logging.DEBUG)
@@ -17,14 +19,33 @@ logger.addHandler(handler)
 
 logger.debug('START')
 
-players = []
+players = {}
+games = OrderedDict()
 msg_count = 0
 
 
 def get_this_socket():
     for sessid, socket in request.namespace.socket.server.sockets.items():
         if socket['/play'].session.get('id', None) == session['id']:
-            return socket
+            return socket['/play']
+
+
+def add_player(player_id):
+    try:
+        last_game = games[next(reversed(games))]
+        if len(last_game.players) < 2:
+            last_game.add_player(session['id'])
+            logger.debug('Joined Game, GAMES: \n\t' + 
+                    '\n\t'.join(str(x) for x in games))
+            return
+    except StopIteration:
+        pass
+    new_game = RpsRunner()
+    new_game.add_player(session['id'])
+    games[str(uuid4())] = new_game
+    logger.debug('Added Game, GAMES: \n\t' + 
+            '\n\t'.join(str(x) for x in games))
+    
 
 @app.route('/')
 @app.route('/index')
@@ -49,27 +70,29 @@ def rules():
 def play_connect():
     global players
     session['id'] = str(uuid4())
-    print('ID: ' + session['id'])
-    emit('connected', {'data': 'Connected'})
+    logger.debug('Connected ID: ' + session['id'])
+    emit('connected', {'id': session['id']})
+
 
 @socketio.on('connect_ack', namespace='/play')
 def play_connect_ack(message):
-    players.append(get_this_socket())
+    players[session['id']] = {'socket': get_this_socket()}
     logger.debug('play_connect_ack PLAYERS: \n\t' + 
             '\n\t'.join(str(p) for p in players))
+    add_player(session['id'])
 
-   
 
 @socketio.on('disconnect', namespace='/play')
 def play_disconnect():
     global players
-    players.remove(get_this_socket())
+    players.pop(session['id'])
     logger.debug('play_disconnect PLAYERS: \n\t' + 
             '\n\t'.join(str(p) for p in players))
-
-   
 
 
 @socketio.on('throw', namespace='/play')
 def receive_throw(message):
-    emit('throw ack', {'data': 'ACK: ' + message['data']})
+    #emit('throw ack', {'data': 'ACK: ' + message['data']})
+    sock = players[session['id']]['socket']
+    sock.base_emit('throw ack', {'data': 'ACK: ' + message['data']})
+
