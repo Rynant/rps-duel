@@ -40,8 +40,7 @@ def add_player(player_id):
             return
     except StopIteration:
         pass
-    new_game = RpsRunner()
-    new_game.add_player(session['id'])
+    new_game = RpsRunner(update_client, session['id'])
     games[str(uuid4())] = new_game
     logger.debug('Added Game, GAMES: \n\t' + 
             '\n\t'.join(str(x) for x in games))
@@ -95,4 +94,13 @@ def receive_throw(message):
     #emit('throw ack', {'data': 'ACK: ' + message['data']})
     sock = players[session['id']]['socket']
     sock.base_emit('throw ack', {'data': 'ACK: ' + message['data']})
+
+
+def update_client(message):
+    '''Callback for RpsRunner; forwards messages to the client.'''
+    global players
+    logger.debug('In update_client()')
+    logger.debug('Message: ' + message)
+    for c in players.values():
+        c['socket'].base_emit('throw ack', {'data': message})
 
