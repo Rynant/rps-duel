@@ -1,6 +1,6 @@
 var mymsg = '';
 $(document).ready(function() {
-	var socket = io.connect('http://localhost:5000/play');
+	var socket = io.connect('http://192.168.1.20:5000/play');
 
 	socket.on('connected', function(msg) {
 		$('#opponent-hand').text("Socket has been opened!");
