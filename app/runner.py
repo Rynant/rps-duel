@@ -17,15 +17,28 @@ logger.addHandler(handler)
 logger.debug('RpsRunner BEGIN')
 
 
-class RpsRunner:
+class RpsRunner(object):
     '''Handles timing and messaging between rpsgame.Game and socket clients.'''
     
     def __init__(self, msgr, players=[]):
         self.game = None
         self.msgr = msgr
+        self._prompt = None
         self.players = []
         for player in players:
             self.add_player(player)
+
+
+    @property
+    def prompt(self):
+        return self._prompt
+
+
+    @prompt.setter
+    def prompt(self, msg):
+        logger.debug('Setting prompt: ' + msg)
+        self._prompt = msg
+        self.send_update()
 
 
     def add_player(self, player):
@@ -45,10 +58,30 @@ class RpsRunner:
 
     def run(self):
         logger.debug('In run')
-        self.msgr('Ready')
+        self.prompt = 'Ready'
         sleep(2)
         for count in ['Rock','Paper','Scissors']:
-            self.msgr(count)
+            logger.debug('Count: ' + count)
+            self.prompt = count
             sleep(1)
-        self.msgr('Shoot!')
+        self.prompt = 'Shoot!'
+
+    def send_update(self):
+        p1 = self.game.player[self.players[0]]
+        p2 = self.game.player[self.players[1]]
+        status = {
+                'players': self.players,
+                self.players[0]:  {
+                    'hand': p1.throw,
+                    'match': p1.match_wins,
+                    'bout': p1.bout_wins },
+                self.players[1]: {
+                    'hand': p2.throw,
+                    'match': p2.match_wins,
+                    'bout': p2.bout_wins },
+                'msg': self.prompt }
+        logger.debug('STATUS: ' + str(status))
+        self.msgr(status)
+
+
 

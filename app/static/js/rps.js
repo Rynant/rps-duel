@@ -13,6 +13,10 @@ $(document).ready(function() {
 		mymsg = msg
 		$('#player-hand').text(msg.data);
 	});
+    socket.on('status', function(msg){
+		mymsg = msg
+		$('#prompt').text(msg.msg);
+	});
     $('#rock').click(function() {
         socket.emit('throw', {data: 'Rock'});
     });

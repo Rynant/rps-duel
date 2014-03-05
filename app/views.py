@@ -95,7 +95,9 @@ def update_client(message):
     '''Callback for RpsRunner; forwards messages to the client.'''
     global players
     logger.debug('In update_client()')
-    logger.debug('Message: ' + message)
-    for c in players.values():
-        c['socket'].base_emit('throw ack', {'data': message})
+    logger.debug('Message: {0}'.format(message))
+    for player in message['players']:
+        sock = players[player]['socket']
+        status = {'msg': message['msg']}
+        sock.base_emit('status', status)
 
