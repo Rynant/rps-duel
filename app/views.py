@@ -9,12 +9,7 @@ from runner import RpsRunner
 
 logger = logging.getLogger("Views")
 logger.setLevel(logging.DEBUG)
-handler = StreamHandler()
-handler.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 
 logger.debug('START')
@@ -32,15 +27,15 @@ def get_this_socket():
 
 def add_player(player_id):
     try:
-        last_game = games[next(reversed(games))]
-        if len(last_game.players) < 2:
-            last_game.add_player(session['id'])
+        open_game = next(game for gid, game in games.iteritems() if len(game.players) < 2)
+        if open_game:
+            open_game.add_player(session['id'])
             logger.debug('Joined Game, GAMES: \n\t' + 
                     '\n\t'.join(str(x) for x in games))
             return
     except StopIteration:
         pass
-    new_game = RpsRunner(update_client, session['id'])
+    new_game = RpsRunner(update_client, [session['id']])
     games[str(uuid4())] = new_game
     logger.debug('Added Game, GAMES: \n\t' + 
             '\n\t'.join(str(x) for x in games))

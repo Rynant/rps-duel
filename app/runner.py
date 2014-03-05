@@ -30,10 +30,12 @@ class RpsRunner:
 
     def add_player(self, player):
         '''Game will start once two players have been added.'''
+        logger.debug('In add_player(); player: {0}'.format(str(player)))
         if len(self.players) == 2:
             return None
         self.players.append(player)
         logger.debug('Appending player {0}'.format(len(self.players)))
+        logger.debug('len(players): {0}'.format(len(self.players)))
         if len(self.players) == 2:
             logger.debug('Creating game')
             self.game = Game(*self.players)
