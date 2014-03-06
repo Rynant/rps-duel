@@ -20,9 +20,13 @@ logger.debug('RpsRunner BEGIN')
 class RpsRunner(object):
     '''Handles timing and messaging between rpsgame.Game and socket clients.'''
     
-    def __init__(self, msgr, players=[]):
+    def __init__(self, msg_callback, players=[]):
+        '''msg_callback is called by RpsRunner to send a dictionary of the
+        game status back to the client. The runner can be initialized with
+        0-2 players. The game will not start until there are 2 players.'''
         self.game = None
-        self.msgr = msgr
+        self.accept_throw = False
+        self.msg_callback = msg_callback
         self._prompt = None
         self.players = []
         for player in players:
@@ -31,14 +35,36 @@ class RpsRunner(object):
 
     @property
     def prompt(self):
+        '''The prompt is the current message to display to the client.
+        E.g. "Rock", "Paper", "You Win!"'''
         return self._prompt
 
 
     @prompt.setter
     def prompt(self, msg):
+        '''When set, the prompt property calls send_update.'''
         logger.debug('Setting prompt: ' + msg)
         self._prompt = msg
         self.send_update()
+
+
+    def send_update(self):
+        '''Send state updates to the callback provieded at init.'''
+        p1 = self.game.player[self.players[0]]
+        p2 = self.game.player[self.players[1]]
+        status = {
+                'players': self.players,
+                self.players[0]:  {
+                    'hand': p1.throw,
+                    'match': p1.match_wins,
+                    'bout': p1.bout_wins },
+                self.players[1]: {
+                    'hand': p2.throw,
+                    'match': p2.match_wins,
+                    'bout': p2.bout_wins },
+                'msg': self.prompt }
+        logger.debug('STATUS: ' + str(status))
+        self.msg_callback(status)
 
 
     def add_player(self, player):
@@ -56,32 +82,37 @@ class RpsRunner(object):
             logger.debug('Starting run()')
             runner.start()
 
+
+    def throw(self, player_id, throw):
+        '''If currently accepting throws, set the players throw.'''
+        if self.accept_throw:
+            self.game.player[player_id].throw = throw
+            return True
+        return False
+
+
     def run(self):
-        logger.debug('In run')
+        '''Run the game until there is a winner.'''
+        logger.debug('In run()')
+        while not self.game.winner:
+            self.count_off()
+            self.game.judge()
+            self.send_update()
+            sleep(3)
+        self.prompt = 'Winner is {0}'.format(self.game.winner)
+
+
+    def count_off(self):
+        '''Count off 'Rock', 'Paper', 'Scissors' and accept throws.'''
+        logger.debug('In count_off()')
+        self.accept_throw = True
         self.prompt = 'Ready'
-        sleep(2)
+        sleep(1)
         for count in ['Rock','Paper','Scissors']:
+            sleep(1)
             logger.debug('Count: ' + count)
             self.prompt = count
-            sleep(1)
+        self.accept_throw = False
+        sleep(1)
         self.prompt = 'Shoot!'
-
-    def send_update(self):
-        p1 = self.game.player[self.players[0]]
-        p2 = self.game.player[self.players[1]]
-        status = {
-                'players': self.players,
-                self.players[0]:  {
-                    'hand': p1.throw,
-                    'match': p1.match_wins,
-                    'bout': p1.bout_wins },
-                self.players[1]: {
-                    'hand': p2.throw,
-                    'match': p2.match_wins,
-                    'bout': p2.bout_wins },
-                'msg': self.prompt }
-        logger.debug('STATUS: ' + str(status))
-        self.msgr(status)
-
-
 

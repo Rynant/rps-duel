@@ -27,16 +27,20 @@ def get_this_socket():
 
 def add_player(player_id):
     try:
-        open_game = next(game for gid, game in games.iteritems() if len(game.players) < 2)
+        gid, open_game = next([gid, game] for gid, game in 
+                games.iteritems() if len(game.players) < 2)
         if open_game:
             open_game.add_player(session['id'])
+            players[session['id']]['game'] = gid
             logger.debug('Joined Game, GAMES: \n\t' + 
                     '\n\t'.join(str(x) for x in games))
             return
     except StopIteration:
         pass
     new_game = RpsRunner(update_client, [session['id']])
-    games[str(uuid4())] = new_game
+    game_id = str(uuid4())
+    games[game_id] = new_game
+    players[session['id']]['game'] = game_id
     logger.debug('Added Game, GAMES: \n\t' + 
             '\n\t'.join(str(x) for x in games))
     
@@ -86,9 +90,14 @@ def play_disconnect():
 
 @socketio.on('throw', namespace='/play')
 def receive_throw(message):
-    #emit('throw ack', {'data': 'ACK: ' + message['data']})
-    sock = players[session['id']]['socket']
-    sock.base_emit('throw ack', {'data': 'ACK: ' + message['data']})
+    sid = session['id']
+    sock = players[sid]['socket']
+    game = games[players[sid]['game']]
+    logger.debug('Setting throw: {0}'.format(message['data']))
+    is_set = game.throw(sid, message['data'])
+    if is_set:
+        logger.debug('Throw of {0} was set.'.format(message['data']))
+        sock.base_emit('throw ack', {'data': 'ACK: ' + message['data']})
 
 
 def update_client(message):
