@@ -97,16 +97,17 @@ def receive_throw(message):
     is_set = game.throw(sid, message['data'])
     if is_set:
         logger.debug('Throw of {0} was set.'.format(message['data']))
-        sock.base_emit('throw ack', {'data': 'ACK: ' + message['data']})
+        sock.base_emit('throw_ack', {'data': 'ACK: ' + message['data']})
 
 
 def update_client(message):
     '''Callback for RpsRunner; forwards messages to the client.'''
     global players
     logger.debug('In update_client()')
-    logger.debug('Message: {0}'.format(message))
     for player in message['players']:
         sock = players[player]['socket']
-        status = {'msg': message['msg']}
-        sock.base_emit('status', status)
+        for event, data in message['update'].iteritems():
+            logger.debug('Player: {0} Event: {1} Message: {2}'.format(
+                player, event, data))
+            sock.base_emit(event, data)
 

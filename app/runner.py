@@ -27,33 +27,27 @@ class RpsRunner(object):
         self.game = None
         self.accept_throw = False
         self.msg_callback = msg_callback
-        self._prompt = None
         self.players = []
         for player in players:
             self.add_player(player)
 
-
-    @property
-    def prompt(self):
-        '''The prompt is the current message to display to the client.
-        E.g. "Rock", "Paper", "You Win!"'''
-        return self._prompt
-
-
-    @prompt.setter
-    def prompt(self, msg):
-        '''When set, the prompt property calls send_update.'''
+    def send_prompt(self, msg):
+        '''Sends prompts to the client'''
         logger.debug('Setting prompt: ' + msg)
-        self._prompt = msg
-        self.send_update()
+        self.send_update({'prompt': {'msg': msg}})
 
 
-    def send_update(self):
+    def send_update(self, data={}):
         '''Send state updates to the callback provieded at init.'''
+        msg = {'players': self.players}
+        msg.update({'update': data})
+        self.msg_callback(msg)
+
+
+    def send_score(self):
         p1 = self.game.player[self.players[0]]
         p2 = self.game.player[self.players[1]]
-        status = {
-                'players': self.players,
+        status = {'scores': {
                 self.players[0]:  {
                     'hand': p1.throw,
                     'match': p1.match_wins,
@@ -61,10 +55,9 @@ class RpsRunner(object):
                 self.players[1]: {
                     'hand': p2.throw,
                     'match': p2.match_wins,
-                    'bout': p2.bout_wins },
-                'msg': self.prompt }
+                    'bout': p2.bout_wins }}}
         logger.debug('STATUS: ' + str(status))
-        self.msg_callback(status)
+        self.send_update(status)
 
 
     def add_player(self, player):
@@ -97,22 +90,22 @@ class RpsRunner(object):
         while not self.game.winner:
             self.count_off()
             self.game.judge()
-            self.send_update()
+            self.send_score()
             sleep(3)
-        self.prompt = 'Winner is {0}'.format(self.game.winner)
+        self.send_prompt('Winner is {0}'.format(self.game.winner))
 
 
     def count_off(self):
         '''Count off 'Rock', 'Paper', 'Scissors' and accept throws.'''
         logger.debug('In count_off()')
         self.accept_throw = True
-        self.prompt = 'Ready'
+        self.send_prompt('Ready')
         sleep(1)
         for count in ['Rock','Paper','Scissors']:
             sleep(1)
             logger.debug('Count: ' + count)
-            self.prompt = count
+            self.send_prompt(count)
         self.accept_throw = False
         sleep(1)
-        self.prompt = 'Shoot!'
+        self.send_prompt('Shoot!')
 
