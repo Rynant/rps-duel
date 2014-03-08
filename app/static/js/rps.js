@@ -13,7 +13,7 @@ $(document).ready(function() {
 	});
 	socket.on('throw_ack', function(msg){
 		mymsg = msg;
-        resetButtons()
+        resetButtons();
         $('#'+msg.toLowerCase()).css({'border-width': '5px',
                                       'border-color': '#EEE'});
 	});
@@ -21,7 +21,10 @@ $(document).ready(function() {
 		mymsg = msg;
 		$('#prompt').text(msg);
 	});
-
+    // Start new bout
+    socket.on('bout', function(){
+        resetButtons();
+	});
     $('#rock').click(function() {
         socket.emit('throw', 'Rock');
     });

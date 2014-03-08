@@ -86,6 +86,7 @@ def play_disconnect():
     players.pop(session['id'])
     logger.debug('play_disconnect PLAYERS: \n\t' + 
             '\n\t'.join(str(p) for p in players))
+    #TODO End any games the user was a part of.
 
 
 @socketio.on('throw', namespace='/play')

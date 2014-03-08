@@ -1,3 +1,12 @@
+'''
+Manages the timing of the game.
+
+Once two players have been added to the RpsRunner, the runner thread
+starts. The runner thread sends prompts and score updates to the client.
+
+TODO List messages and format.
+
+'''
 from app.rpsgame import Game
 from time import sleep
 from threading import Thread
@@ -76,7 +85,7 @@ class RpsRunner(object):
 
     def throw(self, player_id, throw):
         '''If currently accepting throws, set the players throw.'''
-        if self.accept_throw:
+        if self.accept_throw and not self.game.player[player_id].throw:
             self.game.player[player_id].throw = throw
             return True
         return False
@@ -87,6 +96,7 @@ class RpsRunner(object):
         logger.debug('In run()')
         while not self.game.winner:
             self.count_off()
+            self.send_update({'bout': None})
             self.game.judge()
             self.send_score()
             sleep(3)
