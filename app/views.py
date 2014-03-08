@@ -93,20 +93,20 @@ def receive_throw(message):
     sid = session['id']
     sock = players[sid]['socket']
     game = games[players[sid]['game']]
-    logger.debug('Setting throw: {0}'.format(message['data']))
-    is_set = game.throw(sid, message['data'])
+    logger.debug('Setting throw: {0}'.format(message))
+    is_set = game.throw(sid, message)
     if is_set:
-        logger.debug('Throw of {0} was set.'.format(message['data']))
-        sock.base_emit('throw_ack', {'data': 'ACK: ' + message['data']})
+        logger.debug('Throw of {0} was set.'.format(message))
+        sock.base_emit('throw_ack', message)
 
 
-def update_client(message):
+def update_client(player_ids, message):
     '''Callback for RpsRunner; forwards messages to the client.'''
     global players
     logger.debug('In update_client()')
-    for player in message['players']:
+    for player in player_ids:
         sock = players[player]['socket']
-        for event, data in message['update'].iteritems():
+        for event, data in message.iteritems():
             logger.debug('Player: {0} Event: {1} Message: {2}'.format(
                 player, event, data))
             sock.base_emit(event, data)

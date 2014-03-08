@@ -12,25 +12,27 @@ $(document).ready(function() {
 		$('#opponent-hand').text("Socket has closed!");
 	});
 	socket.on('throw_ack', function(msg){
-		mymsg = msg
-		$('#player-hand').text(msg.data);
-	});
-    socket.on('status', function(msg){
-		mymsg = msg
-		$('#prompt').text(msg.msg);
+		mymsg = msg;
+        resetButtons()
+        $('#'+msg.toLowerCase()).css({'border-width': '5px',
+                                      'border-color': '#EEE'});
 	});
     socket.on('prompt', function(msg){
-		mymsg = msg
-		$('#prompt').text(msg.msg);
+		mymsg = msg;
+		$('#prompt').text(msg);
 	});
 
     $('#rock').click(function() {
-        socket.emit('throw', {data: 'Rock'});
+        socket.emit('throw', 'Rock');
     });
     $('#paper').click(function() {
-        socket.emit('throw', {data: 'Paper'});
+        socket.emit('throw', 'Paper');
     });
     $('#scissors').click(function() {
-        socket.emit('throw', {data: 'Scissors'});
+        socket.emit('throw', 'Scissors');
     });
 });
+
+function resetButtons() {
+   $('.throw-button').css({'border-width': '1px'}); 
+}

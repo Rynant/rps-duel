@@ -31,17 +31,15 @@ class RpsRunner(object):
         for player in players:
             self.add_player(player)
 
+
     def send_prompt(self, msg):
         '''Sends prompts to the client'''
-        logger.debug('Setting prompt: ' + msg)
-        self.send_update({'prompt': {'msg': msg}})
+        self.send_update({'prompt': msg})
 
 
     def send_update(self, data={}):
-        '''Send state updates to the callback provieded at init.'''
-        msg = {'players': self.players}
-        msg.update({'update': data})
-        self.msg_callback(msg)
+        '''Sends state updates to the callback provieded at init.'''
+        self.msg_callback(self.players, data)
 
 
     def send_score(self):
