@@ -7,17 +7,17 @@
 
         <div id="throw-select" class="row game-buttons">
           <div class="col-md-6 button-row">
-                <div class="col-sm-4 throw-button">
+                <div class="col-sm-4 throws">
 					<button id="rock" type="button" class="btn btn-block btn-primary throw-button">
                             Rock
                         </button>
 				</div>
-                <div class="col-sm-4 throw-button">
+                <div class="col-sm-4 throws">
 					<button id="paper" type="button" class="btn btn-block  btn-success throw-button">
                             Paper
                         </button>
 				</div>
-                <div class="col-sm-4 throw-button">
+                <div class="col-sm-4 throws">
 					<button id="scissors" type="button" class="btn btn-block  btn-warning throw-button">
                             Scissors
                         </button>
@@ -35,6 +35,30 @@
           <div id="opponent-hand" class="col-md-6 hand">None</div>
         </div>
 
+        <div class="row">
+            <div id="player-scores" class="col-md-6 scores">
+                <div id="player-m1" class="col-md-4 player-match">
+                    0
+                </div>
+                <div id="player-m2" class="col-md-4 player-match">
+                    0
+                </div>
+                <div id="player-m3" class="col-md-4 player-match">
+                    0
+                </div>
+            </div>
+            <div id="opponent-scores" class="col-md-6 scores">
+                <div id="opponent-m1" class="col-md-4 opponent-match">
+                    0
+                </div>
+                <div id="opponent-m2" class="col-md-4 opponent-match">
+                    0 
+                </div>
+                <div id="opponent-m3" class="col-md-4 opponent-match">
+                    0
+                </div>
+            </div>
+        </div>
       </div>
 
 {% endblock %}

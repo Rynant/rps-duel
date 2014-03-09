@@ -9,7 +9,7 @@
 }
 
 .hands {
-    height: 250px;
+    height: 175px;
 }
 
 .hand {
@@ -30,6 +30,9 @@
     height: 100%;
 }
 
+.throws {
+    height: 100%;
+}
 .button-row {
     height: 60px;
     background: #6A6;

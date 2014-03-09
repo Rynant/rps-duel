@@ -82,11 +82,19 @@ def play_connect_ack(message):
 
 @socketio.on('disconnect', namespace='/play')
 def play_disconnect():
-    global players
-    players.pop(session['id'])
+    global players, games
+    sid = session['id']
+    players.pop(sid)
     logger.debug('play_disconnect PLAYERS: \n\t' + 
             '\n\t'.join(str(p) for p in players))
-    #TODO End any games the user was a part of.
+    for gid, game in games.iteritems():
+        if sid in game.players:
+            player = [x for x in game.players if x != sid][0]
+            logger.debug('Sending disconnect message to {0}'.format(player))
+            players[player]['socket'].base_emit('prompt',
+                    'Player disconnected. You Win!')
+            games.pop(gid)
+
 
 
 @socketio.on('throw', namespace='/play')
@@ -106,7 +114,11 @@ def update_client(player_ids, message):
     global players
     logger.debug('In update_client()')
     for player in player_ids:
-        sock = players[player]['socket']
+        try:
+            sock = players[player]['socket']
+        except KeyError as e:
+            logger.debug('Player {0} does not exist.'.format(e))
+            continue
         for event, data in message.iteritems():
             logger.debug('Player: {0} Event: {1} Message: {2}'.format(
                 player, event, data))
