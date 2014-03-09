@@ -1,5 +1,6 @@
 var mymsg = '';
 var my_id = '';
+var last_score = '';
 $(document).ready(function() {
 	var socket = io.connect('http://192.168.1.20:5000/play');
 
@@ -21,10 +22,24 @@ $(document).ready(function() {
 		mymsg = msg;
 		$('#prompt').text(msg);
 	});
-    // Start new bout
     socket.on('bout', function(){
         resetButtons();
 	});
+    socket.on('scores', function(msg){
+        console.log('On scores');
+        Object.keys(msg).forEach(function (key) {
+            var score = msg[key];
+            last_score = score;
+            if(key === my_id) {
+                var player = 'player';
+            } 
+            else {
+                var player = 'opponent';
+            }
+            console.log('#'+player+'-hand');
+            $('#'+player+'-hand').text(score['hand']);
+        });
+    });
     $('#rock').click(function() {
         socket.emit('throw', 'Rock');
     });
@@ -37,5 +52,5 @@ $(document).ready(function() {
 });
 
 function resetButtons() {
-   $('.throw-button').css({'border-width': '1px'}); 
+   $('.throw-button').css({'border': 'solid 1px black'}); 
 }

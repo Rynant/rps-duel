@@ -11,10 +11,15 @@ while not game.winner:
 print('{0} wins!'.format(game.winner))
 
 '''
+import logging
+
+logger = logging.getLogger("Views")
+logger.setLevel(logging.DEBUG)
+
 
 THROWS = { 'Rock': 'Scissors', 'Paper': 'Rock', 'Scissors': 'Paper' }
 
-MATCHES_TO_WIN = 2
+MATCHES_TO_WIN = 3
 BOUTS_TO_WIN = 2
 
 class _Player(object):
@@ -23,6 +28,7 @@ class _Player(object):
         self.match_wins = 0
         self.bout_wins = 0
         self._throw = ''
+        self.last_throw = ''
 
 
     @property
@@ -36,7 +42,10 @@ class _Player(object):
         '''If the throw is not a valid throw (is a key of THROWS), the player's
         throw is set to an empty string.
         '''
-        self._throw =  THROWS.get(move.title(), '')
+        logger.debug('Setting throw of {0}'.format(move))
+        move = move.title()
+        if THROWS.has_key(move) or move == '':
+            self._throw = move
     
     def __repr__(self):
         text = "{{match_wins: {0}, bout_wins: {1}, throw: '{2}'}}"
@@ -103,6 +112,8 @@ class Game(object):
             else:
                 scorer = p2
                 
+        self.player[p1].last_throw = self.player[p1].throw
+        self.player[p2].last_throw = self.player[p2].throw
         self.player[p1].throw = self.player[p2].throw = ''
         
         if scorer:

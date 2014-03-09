@@ -56,11 +56,11 @@ class RpsRunner(object):
         p2 = self.game.player[self.players[1]]
         status = {'scores': {
                 self.players[0]:  {
-                    'hand': p1.throw,
+                    'hand': p1.last_throw,
                     'match': p1.match_wins,
                     'bout': p1.bout_wins },
                 self.players[1]: {
-                    'hand': p2.throw,
+                    'hand': p2.last_throw,
                     'match': p2.match_wins,
                     'bout': p2.bout_wins }}}
         logger.debug('STATUS: ' + str(status))
@@ -85,9 +85,12 @@ class RpsRunner(object):
 
     def throw(self, player_id, throw):
         '''If currently accepting throws, set the players throw.'''
+        logger.debug('Player {0} throw of {1}'.format(player_id, throw))
         if self.accept_throw and not self.game.player[player_id].throw:
             self.game.player[player_id].throw = throw
             return True
+        logger.debug('Not setting throw. accept_throw={0} throw={1}'.format(
+                self.accept_throw, self.game.player[player_id].throw))
         return False
 
 
