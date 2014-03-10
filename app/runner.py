@@ -10,6 +10,7 @@ TODO List messages and format.
 from app.rpsgame import Game
 from time import sleep
 from threading import Thread
+import thread
 import logging
 from logging import StreamHandler
 
@@ -37,6 +38,7 @@ class RpsRunner(object):
         self.accept_throw = False
         self.msg_callback = msg_callback
         self.players = []
+        self._stop = False
         for player in players:
             self.add_player(player)
 
@@ -48,6 +50,8 @@ class RpsRunner(object):
 
     def send_update(self, data={}):
         '''Sends state updates to the callback provieded at init.'''
+        if self._stop:
+            thread.exit()
         self.msg_callback(self.players, data)
 
 
@@ -92,6 +96,11 @@ class RpsRunner(object):
         logger.debug('Not setting throw. accept_throw={0} throw={1}'.format(
                 self.accept_throw, self.game.player[player_id].throw))
         return False
+
+
+    def stop(self):
+        '''Sets a flag for the runner thread to exit.'''
+        self._stop = True
 
 
     def run(self):

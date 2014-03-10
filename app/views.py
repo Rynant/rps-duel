@@ -84,16 +84,15 @@ def play_connect_ack(message):
 def play_disconnect():
     global players, games
     sid = session['id']
-    players.pop(sid)
-    logger.debug('play_disconnect PLAYERS: \n\t' + 
-            '\n\t'.join(str(p) for p in players))
     for gid, game in games.iteritems():
         if sid in game.players:
+            game.stop()
+            games.pop(gid)
             player = [x for x in game.players if x != sid][0]
             logger.debug('Sending disconnect message to {0}'.format(player))
             players[player]['socket'].base_emit('prompt',
                     'Player disconnected. You Win!')
-            games.pop(gid)
+    players.pop(sid)
 
 
 
