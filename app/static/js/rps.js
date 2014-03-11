@@ -1,6 +1,6 @@
 var mymsg = '';
 var my_id = '';
-var last_score = '';
+
 $(document).ready(function() {
 	var socket = io.connect('http://192.168.1.20:5000/play');
 
@@ -29,15 +29,20 @@ $(document).ready(function() {
         console.log('On scores');
         Object.keys(msg).forEach(function (key) {
             var score = msg[key];
-            last_score = score;
-            if(key === my_id) {
-                var player = 'player';
-            } 
-            else {
-                var player = 'opponent';
-            }
-            console.log('#'+player+'-hand');
+            var element = '';
+            if(key === my_id) { var player = 'player'; } 
+            else { var player = 'opponent'; }
             $('#'+player+'-hand').text(score['hand']);
+            for(var i = 1; i <= 3; i++) {
+                element = '#'+player+'-m'+i;
+                if(score['match'] >= i ) {
+                    $(element).text(2);
+                }
+                else {
+                    if(score['bout']) { $(element).text(1); }
+                    break;
+                }
+            }
         });
     });
     socket.on('end_game', function(msg){
