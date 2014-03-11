@@ -112,7 +112,7 @@ class RpsRunner(object):
             self.game.judge()
             self.send_score()
             sleep(3)
-        self.send_prompt('Winner is {0}'.format(self.game.winner))
+        self.send_update({'end_game': {'winner': self.game.winner}})
 
 
     def count_off(self):

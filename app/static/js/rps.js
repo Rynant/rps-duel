@@ -40,6 +40,14 @@ $(document).ready(function() {
             $('#'+player+'-hand').text(score['hand']);
         });
     });
+    socket.on('end_game', function(msg){
+        if(msg['winner'] === my_id) {
+            $('#prompt').text('You Win!');
+        }
+        else {
+            $('#prompt').text('You Lose.');
+        }
+    });
     $('#rock').click(function() {
         socket.emit('throw', 'Rock');
     });
