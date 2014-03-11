@@ -84,7 +84,8 @@ class Game(object):
         
         self.player[player_key].bout_wins += 1
         if self.player[player_key].bout_wins == BOUTS_TO_WIN:
-            self.player[player_key].bout_wins = 0
+			for each in self.player:
+				self.player[each].bout_wins = 0
             self.player[player_key].match_wins += 1
             if self.player[player_key].match_wins == MATCHES_TO_WIN:
                 return True
@@ -99,30 +100,36 @@ class Game(object):
         if self._winner:
             return self.winner
         
-        p1, p2 = self.player.keys()
+        (pid1, p1), (pid2, p2) = self.player.items()
+
         scorer = ''
+        result = ''
         
-        if self.player[p1].throw != self.player[p2].throw:
-            if not self.player[p1].throw:
-                scorer = p2
-            elif not self.player[p2].throw:
-                scorer = p1
-            elif THROWS.get(self.player[p1].throw) == self.player[p2].throw:
-                scorer = p1
+        if p1.throw != p2.throw:
+            if not p1.throw:
+                scorer = pid2
+            elif not p2.throw:
+                scorer = pid1
+            elif THROWS.get(p1.throw) == p2.throw:
+                scorer = pid1
             else:
-                scorer = p2
+                scorer = pid2
                 
-        self.player[p1].last_throw = self.player[p1].throw
-        self.player[p2].last_throw = self.player[p2].throw
-        self.player[p1].throw = self.player[p2].throw = ''
+        p1.last_throw = p1.throw
+        p2.last_throw = p2.throw
+        p1.throw = p2.throw = ''
         
         if scorer:
+			loser = pid1 if scorer == pid2 else pid2
+			msg = "{0} beats {0}".format(self.player[scorer].last_throw,
+										 self.player[loser].last_throw)
             win = self._add_point(scorer)
             if win:
                 self._winner = scorer
-                self._loser = p1 if scorer == p2 else p2
-        
-        return self.winner
+                self._loser = loser
+            return msg
+        else:
+			return 'Draw'
                 
         
         
