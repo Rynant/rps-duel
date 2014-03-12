@@ -115,13 +115,13 @@ class Game(object):
             else:
                 scorer = pid2
                 
-        p1.last_throw = p1.throw
-        p2.last_throw = p2.throw
+        p1.last_throw = p1.throw if p1.throw else 'No-Throw'
+        p2.last_throw = p2.throw if p2.throw else 'No-Throw'
         p1.throw = p2.throw = ''
         
         if scorer:
             loser = pid1 if scorer == pid2 else pid2
-            msg = "{0} beats {0}".format(self.player[scorer].last_throw,
+            msg = "{0} beats {1}".format(self.player[scorer].last_throw,
                                          self.player[loser].last_throw)
             win = self._add_point(scorer)
             if win:

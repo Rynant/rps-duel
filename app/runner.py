@@ -55,7 +55,7 @@ class RpsRunner(object):
         self.msg_callback(self.players, data)
 
 
-    def send_score(self):
+    def send_score(self, msg):
         p1 = self.game.player[self.players[0]]
         p2 = self.game.player[self.players[1]]
         status = {'scores': {
@@ -66,7 +66,8 @@ class RpsRunner(object):
                 self.players[1]: {
                     'hand': p2.last_throw,
                     'match': p2.match_wins,
-                    'bout': p2.bout_wins }}}
+                    'bout': p2.bout_wins }},
+                'prompt': msg }
         logger.debug('STATUS: ' + str(status))
         self.send_update(status)
 
@@ -107,10 +108,11 @@ class RpsRunner(object):
         '''Run the game until there is a winner.'''
         logger.debug('In run()')
         while not self.game.winner:
-            self.count_off()
             self.send_update({'bout': None})
-            self.game.judge()
-            self.send_score()
+            self.count_off()
+            sleep(1)
+            outcome = self.game.judge()
+            self.send_score(outcome)
             sleep(3)
         self.send_update({'end_game': {'winner': self.game.winner}})
 
@@ -125,7 +127,7 @@ class RpsRunner(object):
             sleep(1)
             logger.debug('Count: ' + count)
             self.send_prompt(count)
-        self.accept_throw = False
         sleep(1)
+        self.accept_throw = False
         self.send_prompt('Shoot!')
 

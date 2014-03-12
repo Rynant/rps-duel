@@ -27,6 +27,8 @@ $(document).ready(function() {
 	});
     socket.on('scores', function(msg){
         console.log('On scores');
+        $('#prompt').text(msg['prompt']);
+        delete msg['prompt'];
         Object.keys(msg).forEach(function (key) {
             var score = msg[key];
             var element = '';
