@@ -39,7 +39,7 @@ $(document).ready(function() {
                     $(element).text(2);
                 }
                 else {
-                    if(score['bout']) { $(element).text(1); }
+                    $(element).text(score['bout']);
                     break;
                 }
             }

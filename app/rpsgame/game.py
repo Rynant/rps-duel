@@ -84,8 +84,8 @@ class Game(object):
         
         self.player[player_key].bout_wins += 1
         if self.player[player_key].bout_wins == BOUTS_TO_WIN:
-			for each in self.player:
-				self.player[each].bout_wins = 0
+            for each in self.player:
+                self.player[each].bout_wins = 0
             self.player[player_key].match_wins += 1
             if self.player[player_key].match_wins == MATCHES_TO_WIN:
                 return True
@@ -120,16 +120,16 @@ class Game(object):
         p1.throw = p2.throw = ''
         
         if scorer:
-			loser = pid1 if scorer == pid2 else pid2
-			msg = "{0} beats {0}".format(self.player[scorer].last_throw,
-										 self.player[loser].last_throw)
+            loser = pid1 if scorer == pid2 else pid2
+            msg = "{0} beats {0}".format(self.player[scorer].last_throw,
+                                         self.player[loser].last_throw)
             win = self._add_point(scorer)
             if win:
                 self._winner = scorer
                 self._loser = loser
             return msg
         else:
-			return 'Draw'
+            return 'Draw'
                 
         
         
