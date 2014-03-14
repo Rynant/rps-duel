@@ -30,20 +30,29 @@ def add_player(player_id):
         gid, open_game = next([gid, game] for gid, game in 
                 games.iteritems() if len(game.players) < 2)
         if open_game:
-            open_game.add_player(session['id'])
+            open_game.add_player(player_id)
             players[session['id']]['game'] = gid
             logger.debug('Joined Game, GAMES: \n\t' + 
                     '\n\t'.join(str(x) for x in games))
             return
     except StopIteration:
         pass
-    new_game = RpsRunner(update_client, [session['id']])
+    new_game = RpsRunner(update_client, [player_id])
     game_id = str(uuid4())
     games[game_id] = new_game
-    players[session['id']]['game'] = game_id
+    players[player_id]['game'] = game_id
     logger.debug('Added Game, GAMES: \n\t' + 
             '\n\t'.join(str(x) for x in games))
     
+
+def clear_game(player_id):
+   global games
+   gid = players[player_id]['game']
+   pids = games[gid].players
+   games.pop(gid)
+   for player in pids:
+       add_player(player)
+
 
 @app.route('/')
 @app.route('/index')
@@ -66,7 +75,6 @@ def rules():
 
 @socketio.on('connect', namespace='/play')
 def play_connect():
-    global players
     session['id'] = str(uuid4())
     logger.debug('Connected ID: ' + session['id'])
     emit('connected', {'id': session['id']})
@@ -122,4 +130,8 @@ def update_client(player_ids, message):
             logger.debug('Player: {0} Event: {1} Message: {2}'.format(
                 player, event, data))
             sock.base_emit(event, data)
+    game_over = message.get('end_game', '')
+    if game_over:
+        clear_game(game_over['winner'])
+
 
