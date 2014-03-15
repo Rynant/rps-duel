@@ -31,7 +31,7 @@ def add_player(player_id):
                 games.iteritems() if len(game.players) < 2)
         if open_game:
             open_game.add_player(player_id)
-            players[session['id']]['game'] = gid
+            players[player_id]['game'] = gid
             logger.debug('Joined Game, GAMES: \n\t' + 
                     '\n\t'.join(str(x) for x in games))
             return
@@ -51,6 +51,7 @@ def clear_game(player_id):
    pids = games[gid].players
    games.pop(gid)
    for player in pids:
+       logger.debug('Re-adding player: {0}'.format(player))
        add_player(player)
 
 

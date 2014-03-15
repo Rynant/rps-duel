@@ -107,6 +107,9 @@ class RpsRunner(object):
     def run(self):
         '''Run the game until there is a winner.'''
         logger.debug('In run()')
+        for i in range(10, 0, -1):
+            self.send_prompt('Starting Game in {0} second(s)'.format(i))
+            sleep(1)
         while not self.game.winner:
             self.send_update({'bout': None})
             self.count_off()
