@@ -5,11 +5,16 @@ from uuid import uuid4
 from collections import OrderedDict
 import logging
 from logging import StreamHandler
-from runner import RpsRunner
+from logging.handlers import RotatingFileHandler
+from rpsgame import RpsRunner
 
 logger = logging.getLogger("Views")
 logger.setLevel(logging.DEBUG)
-
+handler = StreamHandler()
+handler.setLevel(logging.DEBUG)
+file_handler = RotatingFileHandler('log/rpsduel.log',maxBytes=10*2**20,
+        backupCount=5)
+file_handler.setLevel(logging.DEBUG)
 
 
 logger.debug('START')

@@ -40,9 +40,11 @@ $(document).ready(function() {
                 if(score['match'] >= i ) {
                     $(element).text(2);
                 }
-                else {
+                else if (score['match'] === i-1) {
                     $(element).text(score['bout']);
-                    break;
+                }
+                else {
+                    $(element).text(0);
                 }
             }
         });
@@ -67,5 +69,13 @@ $(document).ready(function() {
 });
 
 function resetButtons() {
-   $('.throw-button').css({'border': 'solid 1px black'}); 
+    $('.throw-button').css({'border': 'solid 1px black'}); 
+}
+function resetDisplay() {
+    for(var i = 1; i <= 3; i++) {
+        for(player in ['player', 'opponent']) {
+            element = '#'+player+'-m'+i;
+            $(element).text(0);
+        }
+    }
 }
